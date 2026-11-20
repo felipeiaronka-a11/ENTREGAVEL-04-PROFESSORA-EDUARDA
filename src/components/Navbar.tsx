@@ -46,6 +46,7 @@ export function Navbar({
     setNovaFoto(perfil?.foto_url || "");
     setConfirmandoExclusao(false);
     setSenhaConfirmacao("");
+    setMostrarSenhaExclusao(false);
     setEditandoPerfil(!editandoPerfil);
   }
 
@@ -55,6 +56,7 @@ export function Navbar({
     if (ok) {
       setConfirmandoExclusao(false);
       setSenhaConfirmacao("");
+      setMostrarSenhaExclusao(false);
       setEditandoPerfil(false);
     }
   }
@@ -69,6 +71,7 @@ export function Navbar({
       const ok = await onExcluirPerfil(senhaConfirmacao);
       if (ok) {
         setSenhaConfirmacao("");
+        setMostrarSenhaExclusao(false);
         setConfirmandoExclusao(false);
         setEditandoPerfil(false);
       }
@@ -232,6 +235,7 @@ export function Navbar({
                 onClick={() => {
                   setConfirmandoExclusao(false);
                   setSenhaConfirmacao("");
+                  setMostrarSenhaExclusao(false);
                   setEditandoPerfil(false);
                 }}
                 className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3.5 py-2.5 rounded-full uppercase transition"
@@ -243,6 +247,7 @@ export function Navbar({
                 onClick={() => {
                   setConfirmandoExclusao((prev) => !prev);
                   setSenhaConfirmacao("");
+                  setMostrarSenhaExclusao(false);
                 }}
                 className="col-span-2 sm:col-span-1 bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/40 px-3.5 py-2.5 rounded-full uppercase transition"
               >
@@ -251,13 +256,13 @@ export function Navbar({
             </div>
           </form>
 
-{confirmandoExclusao && (
+          {confirmandoExclusao && (
             <form
               onSubmit={confirmarExclusaoPerfil}
               className="bg-rose-950/35 border border-rose-500/40 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-end gap-2.5"
             >
               <span className="text-rose-300 text-xs sm:mr-auto">
-                Confirme sua senha para deletar seu perfil:
+                Confirme sua senha para deletar seu perfil e seus itens:
               </span>
               <div className="relative flex items-center w-full sm:w-56">
                 <input

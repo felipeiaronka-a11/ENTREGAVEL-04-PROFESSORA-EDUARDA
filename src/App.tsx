@@ -313,7 +313,7 @@ export default function App() {
     avisar("Suas mídias foram atualizadas!");
   }
 
-async function excluirPerfilComSenha(senhaDigitada: string) {
+  async function excluirPerfilComSenha(senhaDigitada: string) {
     if (!user?.id || !user?.email) {
       avisar("Usuário não autenticado.", "erro");
       return false;
@@ -334,51 +334,24 @@ async function excluirPerfilComSenha(senhaDigitada: string) {
       return false;
     }
 
-    // Remove primeiro os itens criados pelo usuário (ordem respeitando dependências)
-    const { error: errAvaliacoes } = await (supabase.from("avaliacoes") as any)
-      .delete()
-      .eq("user_id", user.id);
+    const { error: rpcError } = await (supabase as any).rpc(
+      "deletar_minha_conta"
+    );
 
-    if (errAvaliacoes) {
-      avisar(traduzirErro(errAvaliacoes.message), "erro");
-      return false;
-    }
-
-    const { error: errJogos } = await (supabase.from("jogos") as any)
-      .delete()
-      .eq("user_id", user.id);
-
-    if (errJogos) {
-      avisar(traduzirErro(errJogos.message), "erro");
-      return false;
-    }
-
-    const { error: errConsoles } = await (supabase.from("consoles") as any)
-      .delete()
-      .eq("user_id", user.id);
-
-    if (errConsoles) {
-      avisar(traduzirErro(errConsoles.message), "erro");
-      return false;
-    }
-
-    const { error: deletePerfilError } = await (supabase.from("perfis") as any)
-      .delete()
-      .eq("id", user.id);
-
-    if (deletePerfilError) {
-      avisar(traduzirErro(deletePerfilError.message), "erro");
+    if (rpcError) {
+      avisar(traduzirErro(rpcError.message), "erro");
       return false;
     }
 
     setPerfil(null);
     setAlvoEdicao(null);
-    await supabase.auth.signOut();
-    avisar("Seu perfil e os itens criados por você foram removidos.");
+    setUser(null);
+    await supabase.auth.signOut({ scope: "local" });
+    avisar("Conta, perfil e itens removidos com sucesso!");
     await carregarDados();
     return true;
   }
-
+  
   const termo = busca.trim().toLowerCase();
   const consolesFiltrados = consoles.filter(
     (c) =>
