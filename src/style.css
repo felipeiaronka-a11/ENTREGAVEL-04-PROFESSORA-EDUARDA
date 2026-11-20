@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Nunito", sans-serif;
+  background-color: #000000;
+}
+@keyframes brilho-branco {
+  0%,
+  100% {
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7),
+      0 0 18px rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    border-color: #f8fafc;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 1),
+      0 0 32px rgba(255, 255, 255, 0.75);
+  }
+}
+
+@keyframes brilho-azul-logo {
+  0%,
+  100% {
+    text-shadow: 0 0 8px rgba(13, 128, 191, 0.8),
+      0 0 18px rgba(13, 128, 191, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(56, 189, 248, 1),
+      0 0 30px rgba(13, 128, 191, 0.95), 0 0 45px rgba(13, 128, 191, 0.6);
+  }
+}
+
+.moldura-brilho-branco {
+  border: 3px solid #ffffff !important;
+  animation: brilho-branco 2.2s ease-in-out infinite;
+}
+
+.logo-brilho-azul {
+  animation: brilho-azul-logo 2.4s ease-in-out infinite;
+}
