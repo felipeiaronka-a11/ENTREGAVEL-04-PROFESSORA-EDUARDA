@@ -353,14 +353,13 @@ export default function App() {
             />
             <AvaliacoesSection
               user={user}
-              perfil={perfil}
-              jogos={jogos}
               avaliacoes={filtrar(avaliacoes, (a) => [a.jogos?.titulo, a.comentario, a.autor_nome])}
               onRecarregar={carregarDados}
               avisar={avisar}
               onEditarAvaliacao={(d: any) =>
                 abrirEdicao("avaliacao", d, "Você só pode editar suas próprias avaliações.")
               }
+              onIrParaComentar={() => navegar(user ? "comentar" : "login")}
             />
           </div>
         )}
