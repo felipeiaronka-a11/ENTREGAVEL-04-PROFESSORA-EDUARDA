@@ -11,8 +11,13 @@ import { ComentarPage } from "./pages/ComentarPage";
 import { podeEditarItem } from "./services/editService";
 import { resolverCapaJogo, resolverFotoConsole } from "./services/mediaService";
 import { traduzirErro } from "./utils/errorTranslator";
+import { getCookie, setCookie } from "./utils/cookies";
+import { CookieBanner } from "./components/CookiesBanner";
 
 const RESERVADOS = ["ADMIN", "MODERADOR", "SUPORTE", "SISTEMA", "ROOT", "NULL"];
+const COOKIE_CONSENT_KEY = "site_cookie_consent";
+const COOKIE_BUSCA_KEY = "catalogo_busca";
+const COOKIE_EMAIL_KEY = "ultimo_email";
 
 function lerHash(): PaginaApp {
   const h = window.location.hash.replace("#", "");
@@ -49,6 +54,14 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (getCookie(COOKIE_CONSENT_KEY) === "aceito") {
+      const buscaSalva = getCookie(COOKIE_BUSCA_KEY);
+      if (buscaSalva) setBusca(buscaSalva);
+
+      const emailSalvo = getCookie(COOKIE_EMAIL_KEY);
+      if (emailSalvo) setEmail(emailSalvo);
+    }
+
     const onHash = () => setPagina(lerHash());
     window.addEventListener("hashchange", onHash);
     supabase.auth.getUser().then(({ data }) => {
@@ -67,6 +80,12 @@ export default function App() {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (getCookie(COOKIE_CONSENT_KEY) === "aceito") {
+      setCookie(COOKIE_BUSCA_KEY, busca, 7);
+    }
+  }, [busca]);
 
   function validarNome(nome: string) {
     const limpo = nome.trim().toUpperCase();
@@ -143,8 +162,12 @@ export default function App() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const emailLimpo = email.trim();
+    const { error } = await supabase.auth.signInWithPassword({ email: emailLimpo, password });
     if (error) return avisar(traduzirErro(error.message), "erro"), false;
+    if (getCookie(COOKIE_CONSENT_KEY) === "aceito") {
+      setCookie(COOKIE_EMAIL_KEY, emailLimpo, 30);
+    }
     avisar("Login realizado!");
     navegar("catalogo");
     return true;
@@ -374,6 +397,7 @@ export default function App() {
         onJogoAtualizado={() => (avisar("Jogo atualizado!"), carregarDados())}
         onAvaliacaoAtualizada={() => (avisar("Avaliação atualizada!"), carregarDados())}
       />
+      <CookieBanner />
     </div>
   );
 }
